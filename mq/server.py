@@ -1,7 +1,7 @@
 import json
 from sqlalchemy.ext.asyncio import AsyncSession
-from db.utils.to_profile import add_req_to_profile
-from db.utils.to_user import add_req_to_user
+from db.utils.profile import add_profile_notification
+from db.utils.user import add_user_notification
 from aio_pika import connect_robust
 from mq.ws import profile_manager, user_manager
 
@@ -20,9 +20,9 @@ async def srvr(session: AsyncSession) -> None:
                 async with message.process():
                     data = json.loads(message.body.decode('utf-8'))
                     if data.get('to_user'):
-                        await add_req_to_user(data['profile_id'], data['user_id'], True, session)
+                        await add_user_notification(data['profile_id'], data['user_id'], True, session)
                         await user_manager.send_personal_message(data)
                     else:
-                        await add_req_to_profile(data['profile_id'], data['user_id'], True, session)
+                        await add_profile_notification(data['profile_id'], data['user_id'], True, session)
                         await profile_manager.send_personal_message(data)
 

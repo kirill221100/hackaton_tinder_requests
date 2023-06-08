@@ -1,12 +1,12 @@
 from fastapi import FastAPI
 from uvicorn import run
 from db.db_setup import init_db, async_session
-from routers.req import req_router
+from routers.notifications import notification_router
 import asyncio
 from mq.server import srvr
 
 app = FastAPI(docs_url='/docs')
-app.include_router(req_router)
+app.include_router(notification_router)
 
 
 @app.on_event('startup')
